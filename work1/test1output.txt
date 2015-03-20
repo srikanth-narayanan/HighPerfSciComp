@@ -1,0 +1,6 @@
+Code run by **Srikanth Narayanan**
+Environment variable UWHPSC is /Users/Chikoo/GitHub/uwhpsc
+Environment variable MYHPSC is /Users/Chikoo/GitHub/MyUWHPSC
+Imported numpy ok
+Imported matplotlib ok
+Imported pylab ok
