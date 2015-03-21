@@ -17,7 +17,9 @@ yi = np.array([0., 4., 3.])
 # It would be better to define A in terms of the xi points.
 # Doing this is part of the homework assignment.
 # Modified in terms of xi
-A = np.array([[1., 1.*xi[0], 1*xi[0]**2.], [1., 1.*xi[1], 1.*xi[1]**2], [1., 1.*xi[2], 1.*xi[2]**2]])
+A = np.ones((3,3))
+A[:,1] = A[:,1] * xi
+A[:,2] = A[:,2] * (xi**2)
 b = yi
 
 # Solve the system:
