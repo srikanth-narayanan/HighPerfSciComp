@@ -1,0 +1,6 @@
+# Ignore .pyc files
+*.pyc
+# Ignore .out files
+*.out
+# Ignore .png output files
+*.png
