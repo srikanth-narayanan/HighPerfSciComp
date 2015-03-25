@@ -10,6 +10,34 @@ import numpy as np
 import matplotlib.pyplot as plt
 from numpy.linalg import solve
 
+def poly_interp(xi,yi):
+    """
+    Interpolation implementation of polynomial.
+    Compute the coefficients of the polynomial and returns and array c with the
+    results.
+    
+    :param xi: a numpy array of length n
+    :param yi: a numpy array of same length as xi
+    """
+    # check inputs and print error message if not valid:
+    error_message = "xi and yi should have type numpy.ndarray"
+    assert (type(xi) is np.ndarray) and (type(yi) is np.ndarray), error_message
+    
+    error_message = "xi and yi should have equal length"
+    assert len(xi) == len(yi), error_message
+    
+    # Set up linear system to interpolate through data points:
+    # co-efficient matrix for the system
+    A = np.ones((len(xi),len(xi)))
+    for i in range(1,len(xi)):
+        A[:,i] = A[:,i] * (xi**i)
+    b = yi
+    
+    ### compute c ###
+    c = solve(A,b)
+    
+    return c
+    
 def quad_interp(xi,yi):
     """
     Quadratic interpolation.  Compute the coefficients of the polynomial
@@ -18,9 +46,7 @@ def quad_interp(xi,yi):
       p(x) = c[0] + c[1]*x + c[2]*x**2.
 
     """
-
     # check inputs and print error message if not valid:
-
     error_message = "xi and yi should have type numpy.ndarray"
     assert (type(xi) is np.ndarray) and (type(yi) is np.ndarray), error_message
 
@@ -132,7 +158,47 @@ def plot_cubic(xi,yi):
     plt.title("Data points and interpolating cubic polynomial")
     
     plt.savefig('cubic.png')   # save figure as .png file
+
+def plot_poly(xi,yi):
+    """
+    This function accepts a set of xi and yi as input points to create a cubic
+    spline and plots the image of the spline.
     
+    :param xi: A numpy one dimensional array of length n
+    :param yi: A numpy one dimentional array of length same as xi
+    """
+    # check inputs and print error message if not valid:
+
+    error_message = "xi and yi should have type numpy.ndarray"
+    assert (type(xi) is np.ndarray) and (type(yi) is np.ndarray), error_message
+
+    error_message = "xi and yi should have equal length"
+    assert len(xi) == len(yi), error_message
+    
+    # calculate the co-efficients of the polynomial
+    c = poly_interp(xi,yi)
+    print c
+    
+    # plot the resulting polynomial
+    x = np.linspace(xi.min() - 1, xi.max() + 1, 1000)
+    #applying horners rule to get y value
+    #http://www.math10.com/en/algebra/horner.html
+    n = len(c)
+    y = c[n-1]
+    for j in range(n-1, 0, -1):
+        y = y*x + c[j - 1]
+    
+    plt.figure(1)       # open plot figure window
+    plt.clf()           # clear figure
+    plt.plot(x,y,'b-')  # connect points with a blue line
+    
+    # Add data points  (polynomial should go through these points!)
+    plt.plot(xi,yi,'ro')   # plot as red circles
+    plt.ylim(yi.min() - 1,yi.max() + 1)         # set limits in y for plot
+    
+    plt.title("Data points and interpolating polynomial")
+    
+    plt.savefig('polynomial.png')   # save figure as .png file
 
 def test_quad1():
     """
@@ -147,7 +213,6 @@ def test_quad1():
     # test that all elements have small error:
     assert np.allclose(c, c_true), \
         "Incorrect result, c = %s, Expected: c = %s" % (c,c_true)
-    
         
 if __name__=="__main__":
     # "main program"
