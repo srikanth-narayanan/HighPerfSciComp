@@ -14,8 +14,6 @@ __version__ = "0.1.0"
 __author__ = "Srikanth Narayanan"
 
 #import necessary libraries
-from numpy import sqrt
-
 
 
 class Newton(object):
@@ -23,7 +21,8 @@ class Newton(object):
     This class creates an object that solves the square root of a given number
     using newtons method
     """
-    def __init__(self, val, initial_guess=1, itr=20, tol=1e-14, debug=False):
+    def __init__(self, initial_guess=1, itr=20, tol=1e-14, debug=False, 
+                 val=None, ext_func=False, fx=None, fxprime=None):
         """
         This is a constructor to load the object with a given number.
 
@@ -31,15 +30,24 @@ class Newton(object):
         :param itr: number of iterations, Default value can be overidden.
         :param tol: Tolerance value to be met by the solver
         """
-        self.val = val
         self.itr = itr
         self.tol = tol
         self.debug = debug
         self.ini_gus = initial_guess
+        self.ext_func = ext_func
+        if self.ext_func:
+            if fx and fxprime is not None:
+                self.fx_user = fx
+                self.fx_prime_user = fxprime
+            else:
+            	print "fx and fxprime definition cannot be none when ext_func is True"
+        else:
+        	self.val = val
+                
     
-    def find_sqr_root(self):
+    def find_root(self):
         """
-        This method uses new method to find roots
+        This method uses newtons method to find roots
         """
         # set initial guess
         x = self.ini_gus
@@ -47,11 +55,18 @@ class Newton(object):
         if self.debug:
             print "Initial guess: x = %22.15E" % x
         
+        if self.ext_func:
+        	my_fx = self.fx_user
+        	my_fxprime = self.fx_prime_user
+        else:
+        	my_fx = self.f_sqrt
+        	my_fxprime = self.fprime_sqrt
+        
         # Newton iteration to find a zero of f(x) 
         for ii in range(self.itr):
             # evaluate func and derivative
-            fx = self.f_sqrt(x)
-            fxprime = self.fprime_sqrt(x)
+            fx = my_fx(x)
+            fxprime = my_fxprime(x)
             if abs(fx) < self.tol:
                 self.sqrt = x
                 self.iter_consumed = ii + 1
@@ -68,7 +83,7 @@ class Newton(object):
         
         # check for convergence
         if ii == self.itr:
-            fx = self.f_sqrt(x)
+            fx = my_fx(x)
             if abs(fx) > self.tol:
                 print "*** Warning: has not yet converged"
         
@@ -97,7 +112,7 @@ class Newton(object):
         for x0 in [1., 2., 100.]:
             print " "  # blank line
             self.ini_gus = x0
-            x,iters = self.find_sqr_root()
+            x,iters = self.find_root()
             print "solve returns x = %22.15e after %i iterations " % (x,iters)
             fx = self.f_sqrt(x)
             fpx = self.fprime_sqrt(x)
