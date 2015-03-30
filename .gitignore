@@ -4,3 +4,9 @@
 *.out
 # Ignore .png output files
 *.png
+# Ignore .mod output files
+*.mod
+# Ignore .o output files
+*.o
+# Ignore .exe output files
+*.exe
